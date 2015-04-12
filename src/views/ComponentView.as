@@ -5,19 +5,9 @@ package views
 {
 	import flash.errors.IllegalOperationError;
 
-	import starling.display.Sprite;
-
-	import starling.events.Event;
-
-	public class ComponentView extends Sprite
+	import starling.display.DisplayObjectContainer;
+	public class ComponentView extends DisplayObjectContainer
 	{
-		protected var _model:Object;
-		protected var _controller:Object;
-		public function ComponentView(model:Object, controller:Object)
-		{
-			_model = model;
-			_controller = controller;
-		}
 
 		public function add(view:ComponentView):void
 		{
@@ -35,7 +25,7 @@ package views
 			return null;
 		}
 
-		public function update(e:Event = null):void
+		public function update(e:* = null):void
 		{
 
 		}

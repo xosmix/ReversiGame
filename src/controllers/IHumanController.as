@@ -3,10 +3,10 @@
  */
 package controllers
 {
-	import models.ICell;
+	import models.ICellModel;
 
 	public interface IHumanController
 	{
-		function takeCell(cell:ICell):void
+		function takeCell(cell:ICellModel):void
 	}
 }
