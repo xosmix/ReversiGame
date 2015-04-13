@@ -27,7 +27,7 @@ package core
 		{
 			if (ratio == 1.0)
 			{
-				_completeFunc.call()
+				_completeFunc.call();
 			}
 		}
 

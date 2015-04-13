@@ -14,10 +14,16 @@ package models
 	{
 		public static const SIZE_BOARD:uint = 8;
 		private var _board:Array;
+		private var _blackScore:ScoreGameModel;
+		private var _whiteScore:ScoreGameModel;
+		private var _currentPlayerScore = IScoreGameModel;
 
 		public function BoardModel()
 		{
 			_board = [];
+			_blackScore = new ScoreGameModel(PlayerFactory.BLACK);
+			_whiteScore = new ScoreGameModel(PlayerFactory.WHITE);
+			_currentPlayerScore = _blackScore;
 			reset();
 		}
 
@@ -36,16 +42,16 @@ package models
 
 		public function initStartPosition():void
 		{
-			var posAverage:uint = board.length / 2;
+			var posAverage:uint = _board.length / 2;
 			var blackStartPosition:Vector.<Point> = new <Point>[new Point(posAverage - 1, posAverage),
 				new Point(posAverage, posAverage - 1)];
 			var whiteStartPosition:Vector.<Point> =	new <Point>[new Point(posAverage - 1, posAverage - 1),
 						new Point(posAverage, posAverage)];
 
-			changeCell(blackStartPosition[0], PlayerFactory.BLACK_STONE);
-			changeCell(blackStartPosition[1], PlayerFactory.BLACK_STONE);
-			changeCell(whiteStartPosition[0], PlayerFactory.WHITE_STONE);
-			changeCell(whiteStartPosition[1], PlayerFactory.WHITE_STONE);
+			changeCell(blackStartPosition[0], PlayerFactory.BLACK);
+			changeCell(blackStartPosition[1], PlayerFactory.BLACK);
+			changeCell(whiteStartPosition[0], PlayerFactory.WHITE);
+			changeCell(whiteStartPosition[1], PlayerFactory.WHITE);
 		}
 
 		public function changeCell(position:Point, futureOwner:uint):void
@@ -73,6 +79,16 @@ package models
 		public function get board():Array
 		{
 			return _board;
+		}
+
+		public function get blackScore():ScoreGameModel
+		{
+			return _blackScore;
+		}
+
+		public function get whiteScore():ScoreGameModel
+		{
+			return _whiteScore;
 		}
 	}
 }

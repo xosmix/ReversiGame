@@ -22,7 +22,7 @@ package core
 	import starling.utils.AssetManager;
 
 	import views.BoardView;
-	import views.Cell;
+	import views.CellView;
 
 	public class Game extends Sprite
 	{

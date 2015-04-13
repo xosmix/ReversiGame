@@ -8,21 +8,29 @@ package controllers
 	import models.BoardModel;
 	import models.IBoardModel;
 	import models.PlayerFactory;
+
 	import starling.display.DisplayObject;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 
-	import views.Cell;
+	import views.CellView;
 
 	public class HumanController implements IHumanController
 	{
 		private var _model:IBoardModel;
-		private var _turn:uint;
+		private var _currentPlayer:uint;
+		private var _bot:BotController;
 
 		public function HumanController(model:IBoardModel):void
 		{
 			_model = model;
+			initBot();
+		}
+
+		private function initBot():void
+		{
+			_bot = new BotController(this, _model.whiteScore.player);
 		}
 
 		public function onActivityCell(e:TouchEvent):void
@@ -30,29 +38,35 @@ package controllers
 			var touchHover:Touch = e.getTouch(e.target as DisplayObject);
 			if(touchHover == null)
 			{
-				_model.selectedCell((e.currentTarget as Cell).position, false);
+				_model.selectedCell((e.currentTarget as CellView).position, false);
 				return;
 			}
 
 			if(touchHover.phase == TouchPhase.HOVER)
 			{
-				_model.selectedCell((e.currentTarget as Cell).position, true);
+				_model.selectedCell((e.currentTarget as CellView).position, true);
 			}
 			else if(touchHover.phase == TouchPhase.BEGAN)
 			{
-				makeMove((e.currentTarget as Cell).position);
+				takeCell((e.currentTarget as CellView).position);
 			}
+		}
+
+		public function takeCell(point:Point = null):void
+		{
+			makeMove(point);
+			_bot.takeCell();
 		}
 
 		public function initStartPosition():void
 		{
 			_model.initStartPosition();
-			_turn = PlayerFactory.BLACK_STONE;
+			_currentPlayer = PlayerFactory.BLACK;
 		}
 
-		private function makeMove(point:Point):void
+		internal function makeMove(point:Point):void
 		{
-			if(!ifNextCellEmpty(point))
+			if(!cellIsEmpty(point))
 			{
 				return;
 			}
@@ -60,15 +74,15 @@ package controllers
 			{
 				return;
 			}
-			placeStone(_turn, point);
-			setCellOwner(point, _turn);
-			//fTurnFinished();
-			_turn = changeTurn(_turn);
+			placeStone(_currentPlayer, point);
+			setCellOwner(point, _currentPlayer);
+			turnFinished(true);
 		}
 
-		private static function changeTurn(turn:uint):uint
+		private function changePlayer():void
 		{
-			return turn == PlayerFactory.BLACK_STONE ? PlayerFactory.WHITE_STONE : PlayerFactory.BLACK_STONE;
+			_currentPlayer = _currentPlayer == _model.blackScore.player ? _model.whiteScore.player : _model.blackScore.player;
+			trace("current player is:  " + _currentPlayer);
 		}
 
 		private function placeStone(turn:uint, position:Point):void
@@ -76,9 +90,9 @@ package controllers
 			_model.changeCell(position, turn);
 		}
 
-		private function findCaptures(point:Point, turnStones:Boolean):uint
+		internal function findCaptures(point:Point, turnStones:Boolean):uint
 		{
-			if(!ifNextCellEmpty(point))
+			if(!cellIsEmpty(point))
 			{
 				return 0;
 			}
@@ -100,7 +114,7 @@ package controllers
 			{
 				return 0;
 			}
-			if(ifNextCellEmpty(newPoint))
+			if(cellIsEmpty(newPoint))
 			{
 				return 0;
 			}
@@ -117,12 +131,13 @@ package controllers
 		{
 			var tempPoint:Point = new Point(position.x, position.y);
 			var stoneCount:uint = 0;
-			while(true)
+			var border:uint = BoardModel.SIZE_BOARD*BoardModel.SIZE_BOARD;
+			while(stoneCount < border)
 			{
 				++stoneCount;
 				tempPoint.x += factor.x;
 				tempPoint.y += factor.y;
-				if(checkingBoundaries(tempPoint) || ifNextCellEmpty(tempPoint))
+				if(checkingBoundaries(tempPoint) || cellIsEmpty(tempPoint))
 				{
 					return 0;
 				}
@@ -130,7 +145,7 @@ package controllers
 				{
 					if(turnStones)
 					{
-						toLineStones(_turn, position, tempPoint, factor);
+						toLineStones(_currentPlayer, position, tempPoint, factor);
 					}
 					return stoneCount - 1;
 				}
@@ -145,14 +160,14 @@ package controllers
 			return point.x > border || point.x < 0 || point.y > border || point.y < 0;
 		}
 
-		private function ifNextCellEmpty(point:Point):Boolean
+		internal function cellIsEmpty(point:Point):Boolean
 		{
 			return getCellOwner(point) == PlayerFactory.EMPTY;
 		}
 
-		private function checkNextSameOwner(point:Point):Boolean
+		internal function checkNextSameOwner(point:Point):Boolean
 		{
-			return getCellOwner(point) == _turn;
+			return getCellOwner(point) == _currentPlayer;
 		}
 
 		private function toLineStones(turn:uint, posFrom:Point, posTo:Point, factor:Point):void
@@ -195,9 +210,99 @@ package controllers
 			}
 		}
 
-		private function fTurnFinished():void
+		private function turnFinished(changeTurn:Boolean):void
 		{
+			if(changeTurn)
+			{
+				changePlayer();
+			}
+			calculateScore();
+			if(isNextMovePossible())
+			{
+				return;
+			}
 
+			if((_model.blackScore.score + _model.whiteScore.score) == BoardModel.SIZE_BOARD*BoardModel.SIZE_BOARD)
+			{
+				//todo game over
+				return;
+			}
+
+			if(_model.blackScore.score == 0 || _model.blackScore.score == 0)
+			{
+				//todo game over not stones
+				return;
+			}
+
+			if(isNextMovePossible())
+			{
+				//todo game over not cell for step
+
+				return;
+			}
+
+			if(changeTurn)
+			{
+				changePlayer();
+			}
+			//todo game over not cell for step - pass
+
+		}
+
+		private function calculateScore():void
+		{
+			_model.blackScore.reset();
+			_model.whiteScore.reset();
+			var tempPoint:Point;
+			var blackCount:uint = 0;
+			var whiteCount:uint = 0;
+			for(var i:uint = 0; i < BoardModel.SIZE_BOARD; ++i)
+			{
+				for(var j:uint = 0; j < BoardModel.SIZE_BOARD; ++j)
+				{
+					tempPoint = new Point(i, j);
+					if(cellIsEmpty(tempPoint))
+					{
+						continue;
+					}
+					if(getCellOwner(tempPoint) == _model.blackScore.player)
+					{
+						blackCount++;
+					}
+					else if(getCellOwner(tempPoint) == _model.whiteScore.player)
+					{
+						whiteCount++;
+					}
+					_model.blackScore.score = blackCount;
+					_model.whiteScore.score = whiteCount;
+				}
+			}
+		}
+
+		private function isNextMovePossible():Boolean
+		{
+			var tempPoint:Point;
+			for(var i:uint = 0; i < BoardModel.SIZE_BOARD; ++i)
+			{
+				for(var j:uint = 0; j < BoardModel.SIZE_BOARD; ++j)
+				{
+					tempPoint = new Point(i, j);
+					if(!cellIsEmpty(tempPoint))
+					{
+						continue;
+					}
+					if(findCaptures(tempPoint, false) > 0)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		public function get currentPlayer():uint
+		{
+			return _currentPlayer;
 		}
 	}
 }

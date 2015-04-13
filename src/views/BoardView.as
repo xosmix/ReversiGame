@@ -52,7 +52,7 @@ package views
 				var tempArray:Array = [];
 				for each(var cellModel:ICellModel in row)
 				{
-					var cell:Cell = new Cell(cellModel, getCellTextureByOwner(cellModel.owner));
+					var cell:CellView = new CellView(cellModel, getCellTextureByOwner(cellModel.owner));
 					var cellFace:Number = background.width / row.length;
 					var margin:Number = cellFace - cell.width >> 1;
 					cell.x = background.x + margin + cellModel.position.x * cellFace;
@@ -77,7 +77,7 @@ package views
 		{
 			var position:Point = e.data.position;
 			var texture:Texture = getCellTextureByOwner(_model.getCellOwner(position));
-			(_children[position.x][position.y] as Cell).updateTexture(texture)
+			(_children[position.x][position.y] as CellView).updateTexture(texture)
 		}
 	}
 }

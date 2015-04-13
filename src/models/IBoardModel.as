@@ -4,7 +4,6 @@
 package models
 {
 	import flash.geom.Point;
-	import starling.textures.Texture;
 
 	public interface IBoardModel
 	{
@@ -19,5 +18,11 @@ package models
 		function getCellOwner(point:Point):uint;
 
 		function setCellOwner(point:Point, owner:uint):void
+
+		function get board():Array
+
+		function get blackScore():ScoreGameModel;
+
+		function get whiteScore():ScoreGameModel;
 	}
 }

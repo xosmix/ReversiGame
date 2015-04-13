@@ -5,10 +5,12 @@ package models
 {
 	public interface IScoreGameModel
 	{
-		function setScoreByPlayer(point:uint, player:IPlayer):void
+		function get player():uint
 
-		function getScoreByPlayer(player:IPlayer):uint
+		function get score():uint
 
-		function reset():void;
+		function set score(value:uint):void
+
+		function reset():void
 	}
 }
