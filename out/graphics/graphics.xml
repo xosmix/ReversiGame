@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="graphics.png">
+	<!-- Created with Adobe Flash Professional version 14.2.0.20 -->
+	<!-- http://www.adobe.com/products/flash.html -->
+	<SubTexture name="background" x="0" y="0" width="480" height="600" pivotX="0" pivotY="0"/>
+	<SubTexture name="blackStone" x="0" y="600" width="40" height="40" pivotX="0" pivotY="0"/>
+	<SubTexture name="board" x="40" y="600" width="444" height="444" pivotX="0" pivotY="0"/>
+	<SubTexture name="button" x="0" y="1044" width="180" height="81" pivotX="0" pivotY="0"/>
+	<SubTexture name="close" x="180" y="1044" width="55" height="55" pivotX="0" pivotY="0"/>
+	<SubTexture name="empty" x="235" y="1044" width="55" height="55" pivotX="0" pivotY="0"/>
+	<SubTexture name="popup" x="0" y="1125" width="463" height="566" pivotX="0" pivotY="0"/>
+	<SubTexture name="popupButton" x="463" y="1125" width="36" height="36" pivotX="0" pivotY="0"/>
+	<SubTexture name="score" x="0" y="1691" width="423" height="92" pivotX="0" pivotY="0"/>
+	<SubTexture name="whiteStone" x="423" y="1691" width="40" height="40" pivotX="0" pivotY="0"/>
+</TextureAtlas>
