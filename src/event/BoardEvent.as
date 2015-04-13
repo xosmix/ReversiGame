@@ -8,6 +8,7 @@ package event
 	public class BoardEvent extends Event
 	{
 		public static const CELL_CHANGED:String = "cellChanged";
+		public static const CELL_SELECTED:String = "cellSelected";
 		public static const BOARD_TEXTURE_CHANGED:String = "boardTextureChanged";
 		private var _data:Object;
 		public function BoardEvent(type:String, data:Object)

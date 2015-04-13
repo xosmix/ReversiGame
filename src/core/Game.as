@@ -6,7 +6,7 @@ package core
 	import controllers.HumanController;
 	import controllers.IHumanController;
 
-	import core.GraphicsManager;
+	import core.AssetsManager;
 
 	import models.BoardModel;
 
@@ -17,6 +17,7 @@ package core
 
 	import starling.display.Sprite;
 	import starling.events.Event;
+	import starling.events.TouchEvent;
 	import starling.textures.Texture;
 	import starling.utils.AssetManager;
 
@@ -42,7 +43,7 @@ package core
 
 		private function onAddedToStage(e:Event = null):void
 		{
-			new GraphicsManager(startGame);
+			new AssetsManager(startGame);
 		}
 
 		private function startGame():void
@@ -50,32 +51,9 @@ package core
 			_boardModel = new BoardModel();
 			_controller = new HumanController(_boardModel);
 			_view = new BoardView(_boardModel, _controller);
+			_view.x = stage.stageWidth - _view.width >> 1;
+			_view.y = stage.stageHeight - _view.height >> 1;
 			addChild(_view);
-			initBoard();
-		}
-
-		private function initBoard():void
-		{
-			var background:Image = new Image(_boardModel.texture);
-			background.x = stage.stageWidth - background.width >> 1;
-			background.y = stage.stageHeight - background.height >> 1;
-			trace(stage.stageWidth + "|" + background.width + "|" + background.x);
-			_view.addChild(background);
-			initCells(background);
-		}
-
-		private function initCells(background:Image):void
-		{
-			for each(var row:Array in _boardModel.gameField)
-			{
-				for each(var cellModel:ICellModel in row)
-				{
-					var cell:Cell = new Cell(cellModel.texture);
-					cell.x = background.x + 2.5 + cellModel.position.x * 55;
-					cell.y = background.y + 2.5 + cellModel.position.y * 55;
-					_view.add(cell);
-				}
-			}
 		}
 	}
 }

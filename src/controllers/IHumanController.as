@@ -3,10 +3,12 @@
  */
 package controllers
 {
-	import models.ICellModel;
+
+	import starling.events.TouchEvent;
 
 	public interface IHumanController
 	{
-		function takeCell(cell:ICellModel):void
+		function initStartPosition():void
+		function onActivityCell(e:TouchEvent):void
 	}
 }

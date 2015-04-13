@@ -3,6 +3,8 @@
  */
 package views
 {
+	import event.BoardEvent;
+
 	import flash.errors.IllegalOperationError;
 
 	import starling.display.DisplayObjectContainer;
@@ -25,7 +27,7 @@ package views
 			return null;
 		}
 
-		public function update(e:* = null):void
+		public function update(e:BoardEvent = null):void
 		{
 
 		}

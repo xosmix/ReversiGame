@@ -3,82 +3,76 @@
  */
 package models
 {
-	import core.GraphicsManager;
-
-	import event.BoardEvent;
 
 	import event.BoardEvent;
 
 	import flash.geom.Point;
 
-	import starling.display.Image;
 	import starling.events.EventDispatcher;
-	import starling.textures.Texture;
 
 	public class BoardModel extends EventDispatcher implements IBoardModel
 	{
-		private var _gameField:Array;
-		private static const SIZE_BOARD:uint = 8;
-		private var _texture:Texture;
+		public static const SIZE_BOARD:uint = 8;
+		private var _board:Array;
+
 		public function BoardModel()
 		{
-			initBoard();
-			initCells();
-		}
-
-		private function initBoard():void
-		{
-			_texture = GraphicsManager.assets.getTexture("board");
-			_gameField = [];
-		}
-
-		private function initCells():void
-		{
-			for(var i:uint = 0; i < SIZE_BOARD; i++)
-			{
-				_gameField[i] = [];
-				for(var j:uint = 0; j < SIZE_BOARD; j++)
-				{
-					var cellModel:ICellModel = new CellModel();
-					cellModel.position = new Point(i, j);
-					cellModel.texture = GraphicsManager.assets.getTexture("empty");
-					_gameField[i][j] = cellModel;
-				}
-			}
-		}
-
-		public function changeCell(cell:ICellModel):void
-		{
-			_gameField[cell.position.x][cell.position.y] = cell;
-			dispatchEvent(new BoardEvent(BoardEvent.CELL_CHANGED, {position: cell.position}));
-		}
-
-		public function getCellState(cell:ICellModel):Boolean
-		{
-			return false;
+			_board = [];
+			reset();
 		}
 
 		public function reset():void
 		{
-			for each(var cell:ICellModel in _gameField)
+			for(var i:uint = 0; i < SIZE_BOARD; i++)
 			{
-				cell.reset();
+				_board[i] = [];
+				for(var j:uint = 0; j < SIZE_BOARD; j++)
+				{
+					var cellModel:ICellModel = new CellModel(new Point(i, j));
+					_board[i][j] = cellModel;
+				}
 			}
 		}
 
-		public function get gameField():Array
+		public function initStartPosition():void
 		{
-			return _gameField;
+			var posAverage:uint = board.length / 2;
+			var blackStartPosition:Vector.<Point> = new <Point>[new Point(posAverage - 1, posAverage),
+				new Point(posAverage, posAverage - 1)];
+			var whiteStartPosition:Vector.<Point> =	new <Point>[new Point(posAverage - 1, posAverage - 1),
+						new Point(posAverage, posAverage)];
+
+			changeCell(blackStartPosition[0], PlayerFactory.BLACK_STONE);
+			changeCell(blackStartPosition[1], PlayerFactory.BLACK_STONE);
+			changeCell(whiteStartPosition[0], PlayerFactory.WHITE_STONE);
+			changeCell(whiteStartPosition[1], PlayerFactory.WHITE_STONE);
 		}
 
-		public function get texture():Texture
+		public function changeCell(position:Point, futureOwner:uint):void
 		{
-			return _texture;
+			var cellModel:ICellModel = _board[position.x][position.y];
+			cellModel.owner = futureOwner;
+			dispatchEvent(new BoardEvent(BoardEvent.CELL_CHANGED, {position: position}));
 		}
 
-		public function set texture(value:Texture):void
+		public function selectedCell(position:Point, status:Boolean):void
 		{
-			_texture = value;
+			//dispatchEvent(new BoardEvent(BoardEvent.CELL_CHANGED, {position: position, status: status}));
+		}
+
+		public function getCellOwner(point:Point):uint
+		{
+			return _board[point.x][point.y].owner;
+		}
+
+		public function setCellOwner(point:Point, owner:uint):void
+		{
+			_board[point.x][point.y].owner = owner;
+		}
+
+		public function get board():Array
+		{
+			return _board;
 		}
 	}
 }

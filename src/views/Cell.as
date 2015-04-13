@@ -3,32 +3,37 @@
  */
 package views
 {
-	import flash.events.Event;
+	import flash.geom.Point;
+
+	import models.ICellModel;
 
 	import starling.display.Image;
 	import starling.textures.Texture;
 
-	public class Cell extends ComponentView
+	public class Cell extends Image
 	{
-		private var _texture:Texture;
-		private var _image:Image;
-		public function Cell(texture:Texture)
+		private var _model:ICellModel;
+		public function Cell(model:ICellModel, texture:Texture):void
 		{
-			update(texture);
+			super(texture);
+			_model = model;
+			alpha = 0;
 		}
 
-		override public function update(texture:* = null):void
+		public function updateTexture(texture:Texture):void
 		{
-			if(_texture != texture)
-			{
-				_texture = texture;
-				if(_image != null)
-				{
-					removeChild(_image);
-				}
-				_image = new Image(_texture);
-				addChild(_image);
-			}
+			this.texture = texture;
+			alpha = 1;
+		}
+
+		private function showIfSelected(status:Boolean):void
+		{
+			alpha = status ? 1 : 0;
+		}
+
+		public function get position():Point
+		{
+			return _model.position;
 		}
 	}
 }

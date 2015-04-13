@@ -4,23 +4,20 @@
 package models
 {
 	import flash.geom.Point;
-
-	import starling.display.Image;
-	import starling.textures.Texture;
 	import starling.textures.Texture;
 
 	public interface IBoardModel
 	{
-		function changeCell(cell:ICellModel):void
+		function initStartPosition():void
 
-		function getCellState(cell:ICellModel):Boolean
+		function changeCell(position:Point, futureOwner:uint):void
+
+		function selectedCell(position:Point, status:Boolean):void
 
 		function reset():void
 
-		function get gameField():Array
+		function getCellOwner(point:Point):uint;
 
-		function set texture(value:Texture):void
-
-		function get texture():Texture;
+		function setCellOwner(point:Point, owner:uint):void
 	}
 }
