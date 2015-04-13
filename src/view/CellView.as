@@ -1,11 +1,11 @@
 /**
  * Created by SergeyMalenko on 12.04.2015.
  */
-package views
+package view
 {
 	import flash.geom.Point;
 
-	import models.ICellModel;
+	import model.ICellModel;
 
 	import starling.animation.Juggler;
 

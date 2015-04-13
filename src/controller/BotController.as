@@ -1,14 +1,14 @@
 /**
  * Created by SergeyMalenko on 13.04.2015.
  */
-package controllers
+package controller
 {
 	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	import flash.geom.Point;
 	import flash.utils.Timer;
 
-	import models.BoardModel;
+	import model.BoardModel;
 
 	public class BotController
 	{
@@ -44,31 +44,32 @@ package controllers
 
 		public function takeCell():void
 		{
-			if(_controller.currentPlayer == _color)
+			var bootStart:Function = function ():void
 			{
-				var bootStart:Function = function ():void
-				{
-					_timer.stop();
-					_timer.removeEventListener(TimerEvent.TIMER, bootStart);
-					calculateMove();
-				};
-				_timer.addEventListener(TimerEvent.TIMER, bootStart);
-				_timer.start();
-			}
+				_timer.stop();
+				_timer.removeEventListener(TimerEvent.TIMER, bootStart);
+				calculateMove();
+			};
+			_timer.addEventListener(TimerEvent.TIMER, bootStart);
+			_timer.start();
+
 		}
 
 		private static function findCaptures(point:Point, turnStones:Boolean):uint
 		{
 			return _controller.findCaptures(point, turnStones);
 		}
+
 		private static function makeMove(point:Point):void
 		{
 			_controller.makeMove(point);
 		}
-		private static function checkNextSameOwner(point:Point):Boolean
+
+		private static function isSameCellOwner(point:Point):Boolean
 		{
 			return _controller.checkNextSameOwner(point);
 		}
+
 		private static function ifNextCellEmpty(point:Point):Boolean
 		{
 			return _controller.cellIsEmpty(point);
@@ -97,64 +98,64 @@ package controllers
 				return;
 			}
 
-			if(checkNextSameOwner(TOP_LEFT_CORNER))
+			if(isSameCellOwner(TOP_LEFT_CORNER))
 			{
-				if(findAdjacentMove(TOP_LEFT_CORNER, new Point(1, 0), 6))
+				if(findNaiboringMove(TOP_LEFT_CORNER, new Point(1, 0), 6))
 				{
 					return;
 				}
-				if(findAdjacentMove(TOP_LEFT_CORNER, new Point(0, 1), 6))
+				if(findNaiboringMove(TOP_LEFT_CORNER, new Point(0, 1), 6))
 				{
 					return;
 				}
 			}
-			if(checkNextSameOwner(TOP_RIGHT_CORNER))
+			if(isSameCellOwner(TOP_RIGHT_CORNER))
 			{
-				if(findAdjacentMove(TOP_RIGHT_CORNER, new Point(-1, 0), 6))
+				if(findNaiboringMove(TOP_RIGHT_CORNER, new Point(-1, 0), 6))
 				{
 					return;
 				}
-				if(findAdjacentMove(TOP_RIGHT_CORNER, new Point(0, 1), 6))
+				if(findNaiboringMove(TOP_RIGHT_CORNER, new Point(0, 1), 6))
 				{
 					return;
 				}
 			}
-			if(checkNextSameOwner(BOTTOM_RIGHT_CORNER))
+			if(isSameCellOwner(BOTTOM_RIGHT_CORNER))
 			{
-				if(findAdjacentMove(BOTTOM_RIGHT_CORNER, new Point(-1, 0), 6))
+				if(findNaiboringMove(BOTTOM_RIGHT_CORNER, new Point(-1, 0), 6))
 				{
 					return;
 				}
-				if(findAdjacentMove(BOTTOM_RIGHT_CORNER, new Point(0, -1), 6))
+				if(findNaiboringMove(BOTTOM_RIGHT_CORNER, new Point(0, -1), 6))
 				{
 					return;
 				}
 			}
-			if(checkNextSameOwner(BOTTOM_LEFT_CORNER))
+			if(isSameCellOwner(BOTTOM_LEFT_CORNER))
 			{
-				if(findAdjacentMove(BOTTOM_LEFT_CORNER, new Point(1, 0), 6))
+				if(findNaiboringMove(BOTTOM_LEFT_CORNER, new Point(1, 0), 6))
 				{
 					return;
 				}
-				if(findAdjacentMove(BOTTOM_LEFT_CORNER, new Point(0, -1), 6))
+				if(findNaiboringMove(BOTTOM_LEFT_CORNER, new Point(0, -1), 6))
 				{
 					return;
 				}
 			}
 
-			if(findAdjacentMove(TOP_TOP_LEFT, new Point(1, 0), 4))
+			if(findNaiboringMove(TOP_TOP_LEFT, new Point(1, 0), 4))
 			{
 				return;
 			}
-			if(findAdjacentMove(TOP_BOTTOM_RIGHT, new Point(0, 1), 4))
+			if(findNaiboringMove(TOP_BOTTOM_RIGHT, new Point(0, 1), 4))
 			{
 				return;
 			}
-			if(findAdjacentMove(BOTTOM_BOTTOM_RIGHT, new Point(-1, 0), 4))
+			if(findNaiboringMove(BOTTOM_BOTTOM_RIGHT, new Point(-1, 0), 4))
 			{
 				return;
 			}
-			if(findAdjacentMove(BOTTOM_TOP_LEFT, new Point(0, -1), 4))
+			if(findNaiboringMove(BOTTOM_TOP_LEFT, new Point(0, -1), 4))
 			{
 				return;
 			}
@@ -171,18 +172,8 @@ package controllers
 					{
 						continue;
 					}
-					if((tempPoint == TOP_LEFT_X) ||
-					   (tempPoint == TOP_RIGHT_X) ||
-					   (tempPoint == BOTTOM_LEFT_X) ||
-					   (tempPoint == BOTTOM_RIGHT_X) ||
-					   (tempPoint == TOP_TOP_LEFT) ||
-					   (tempPoint == TOP_BOTTOM_LEFT) ||
-					   (tempPoint == TOP_TOP_RIGHT) ||
-					   (tempPoint == TOP_BOTTOM_RIGHT) ||
-					   (tempPoint == BOTTOM_TOP_RIGHT) ||
-					   (tempPoint == BOTTOM_BOTTOM_RIGHT) ||
-					   (tempPoint == BOTTOM_TOP_LEFT) ||
-					   (tempPoint == BOTTOM_BOTTOM_LEFT))
+
+					if(isConsiderCornerValue(tempPoint))
 					{
 						continue;
 					}
@@ -272,14 +263,35 @@ package controllers
 			}
 		}
 
-		private function findAdjacentMove(point:Point, factor:Point, depth:uint):Boolean
+		private function isConsiderCornerValue(point:Point):Boolean
+		{
+			return (comparePoint(point, TOP_LEFT_X) ||
+			        comparePoint(point, TOP_RIGHT_X) ||
+			        comparePoint(point, BOTTOM_LEFT_X) ||
+			        comparePoint(point, BOTTOM_RIGHT_X) ||
+			        comparePoint(point, TOP_TOP_LEFT) ||
+			        comparePoint(point, TOP_BOTTOM_LEFT) ||
+			        comparePoint(point, TOP_TOP_RIGHT) ||
+			        comparePoint(point, TOP_BOTTOM_RIGHT) ||
+			        comparePoint(point, BOTTOM_TOP_RIGHT) ||
+			        comparePoint(point, BOTTOM_BOTTOM_RIGHT) ||
+			        comparePoint(point, BOTTOM_TOP_LEFT) ||
+			        comparePoint(point, BOTTOM_BOTTOM_LEFT));
+		}
+
+		private function comparePoint(point1:Point, point2:Point):Boolean
+		{
+			return point1.x == point2.x && point1.y == point2.y;
+		}
+
+		private function findNaiboringMove(point:Point, factor:Point, depth:uint):Boolean
 		{
 			var tempPoint:Point = new Point(point.x, point.y);
 			for(var i:uint = 0; i < depth; ++i)
 			{
 				tempPoint.x += factor.x;
 				tempPoint.y += factor.y;
-				if(checkNextSameOwner(tempPoint))
+				if(isSameCellOwner(tempPoint))
 				{
 					if(findCaptures(tempPoint, false) > 0)
 					{

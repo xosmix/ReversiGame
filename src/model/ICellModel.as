@@ -1,7 +1,7 @@
 /**
  * Created by SergeyMalenko on 12.04.2015.
  */
-package models
+package model
 {
 	import flash.geom.Point;
 

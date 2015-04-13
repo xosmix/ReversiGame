@@ -1,14 +1,20 @@
 /**
  * Created by SergeyMalenko on 13.04.2015.
  */
-package models
+package model
 {
+	import event.BoardEvent;
+
+	import model.IBoardModel;
+
 	public class ScoreGameModel implements IScoreGameModel
 	{
 		private var _player:uint;
 		private var _score:uint = 2;
-		public function ScoreGameModel(player:uint):void
+		private var _model:BoardModel;
+		public function ScoreGameModel(model:BoardModel, player:uint):void
 		{
+			_model = model;
 			_player = player;
 		}
 
@@ -25,11 +31,12 @@ package models
 		public function set score(value:uint):void
 		{
 			_score = value;
+			_model.dispatchEvent(new BoardEvent(BoardEvent.SCORE_CHANGED, {score: score, color: _player}))
 		}
 
 		public function reset():void
 		{
-			_score = 0;
+			score = 0;
 		}
 	}
 }

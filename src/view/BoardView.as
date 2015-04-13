@@ -1,9 +1,9 @@
 /**
  * Created by SergeyMalenko on 12.04.2015.
  */
-package views
+package view
 {
-	import controllers.IHumanController;
+	import controller.IHumanController;
 
 	import core.AssetsManager;
 
@@ -11,11 +11,11 @@ package views
 
 	import flash.geom.Point;
 
-	import models.BoardModel;
+	import model.BoardModel;
 
-	import models.IBoardModel;
-	import models.ICellModel;
-	import models.PlayerFactory;
+	import model.IBoardModel;
+	import model.ICellModel;
+	import model.PlayerFactory;
 
 	import starling.display.DisplayObjectContainer;
 
@@ -28,20 +28,28 @@ package views
 		private var _children:Array;
 		private var _model:BoardModel;
 		private var _controller:IHumanController;
+		private var _scoreView:ScoreGameView;
 		public function BoardView(model:IBoardModel, controller:IHumanController)
 		{
 			_children = [];
 			_model = model as BoardModel;
 			_model.addEventListener(BoardEvent.CELL_CHANGED, update);
+			_model.addEventListener(BoardEvent.SCORE_CHANGED, updateScore);
 			_controller = controller;
-			initBoard();
+			initComponents();
 		}
 
-		private function initBoard():void
+		private function initComponents():void
 		{
 			var boardTexture:Texture = AssetsManager.getTextureByName("board");
 			var background:Image = new Image(boardTexture);
+
+			_scoreView = new ScoreGameView();
+			_scoreView.x = background.width - _scoreView.width >> 1;
+			background.y = _scoreView.height + 5;
 			addChild(background);
+			addChild(_scoreView);
+
 			initCells(background);
 		}
 
@@ -67,6 +75,8 @@ package views
 			_controller.initStartPosition();
 		}
 
+
+
 		private static function getCellTextureByOwner(owner:uint):Texture
 		{
 			var nameTexture:String = PlayerFactory.getNameTextureByPlayer(owner);
@@ -78,6 +88,11 @@ package views
 			var position:Point = e.data.position;
 			var texture:Texture = getCellTextureByOwner(_model.getCellOwner(position));
 			(_children[position.x][position.y] as CellView).updateTexture(texture)
+		}
+
+		public function updateScore(e:BoardEvent = null):void
+		{
+			_scoreView.setScore(e.data.score, e.data.color, _model.currentPlayer);
 		}
 	}
 }

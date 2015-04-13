@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TextureAtlas imagePath="stone.png">
-	<!-- Created with Adobe Flash Professional version 14.2.0.20 -->
-	<!-- http://www.adobe.com/products/flash.html -->
-	<SubTexture name="blackStone" x="0" y="0" width="50" height="50" pivotX="25" pivotY="25"/>
-	<SubTexture name="empty" x="0" y="50" width="55" height="55" pivotX="27.5" pivotY="27.5"/>
-	<SubTexture name="whiteStone" x="0" y="105" width="50" height="50" pivotX="25" pivotY="25"/>
-</TextureAtlas>

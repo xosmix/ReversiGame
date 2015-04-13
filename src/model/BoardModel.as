@@ -1,7 +1,7 @@
 /**
  * Created by SergeyMalenko on 12.04.2015.
  */
-package models
+package model
 {
 
 	import event.BoardEvent;
@@ -16,15 +16,18 @@ package models
 		private var _board:Array;
 		private var _blackScore:ScoreGameModel;
 		private var _whiteScore:ScoreGameModel;
-		private var _currentPlayerScore = IScoreGameModel;
+		private var _currentPlayer:uint;
 
 		public function BoardModel()
 		{
 			_board = [];
-			_blackScore = new ScoreGameModel(PlayerFactory.BLACK);
-			_whiteScore = new ScoreGameModel(PlayerFactory.WHITE);
-			_currentPlayerScore = _blackScore;
-			reset();
+			initPlayerScores();
+		}
+
+		private function initPlayerScores():void
+		{
+			_blackScore = new ScoreGameModel(this, PlayerFactory.BLACK);
+			_whiteScore = new ScoreGameModel(this, PlayerFactory.WHITE);
 		}
 
 		public function reset():void
@@ -38,6 +41,8 @@ package models
 					_board[i][j] = cellModel;
 				}
 			}
+			_blackScore.reset();
+			_whiteScore.reset();
 		}
 
 		public function initStartPosition():void
@@ -76,6 +81,12 @@ package models
 			_board[point.x][point.y].owner = owner;
 		}
 
+		public function changePlayer():void
+		{
+			_currentPlayer = _currentPlayer == _blackScore.player ? _whiteScore.player : _blackScore.player;
+			trace("current player is:  " + _currentPlayer);
+		}
+
 		public function get board():Array
 		{
 			return _board;
@@ -89,6 +100,16 @@ package models
 		public function get whiteScore():ScoreGameModel
 		{
 			return _whiteScore;
+		}
+
+		public function get currentPlayer():uint
+		{
+			return _currentPlayer;
+		}
+
+		public function set currentPlayer(value:uint):void
+		{
+			_currentPlayer = value;
 		}
 	}
 }

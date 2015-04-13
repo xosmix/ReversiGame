@@ -1,36 +1,43 @@
 /**
  * Created by SergeyMalenko on 12.04.2015.
  */
-package controllers
+package controller
 {
 	import flash.geom.Point;
 
-	import models.BoardModel;
-	import models.IBoardModel;
-	import models.PlayerFactory;
+	import model.BoardModel;
+	import model.IBoardModel;
+	import model.PlayerFactory;
 
 	import starling.display.DisplayObject;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 
-	import views.CellView;
+	import view.CellView;
 
 	public class HumanController implements IHumanController
 	{
 		private var _model:IBoardModel;
-		private var _currentPlayer:uint;
 		private var _bot:BotController;
 
 		public function HumanController(model:IBoardModel):void
 		{
 			_model = model;
+			_model.reset();
 			initBot();
 		}
 
 		private function initBot():void
 		{
-			_bot = new BotController(this, _model.whiteScore.player);
+			//_bot = new BotController(this, _model.whiteScore.player);
+		}
+
+		public function initStartPosition():void
+		{
+			_model.initStartPosition();
+			_model.currentPlayer = PlayerFactory.BLACK;
+			calculateScore();
 		}
 
 		public function onActivityCell(e:TouchEvent):void
@@ -54,14 +61,14 @@ package controllers
 
 		public function takeCell(point:Point = null):void
 		{
-			makeMove(point);
-			_bot.takeCell();
-		}
-
-		public function initStartPosition():void
-		{
-			_model.initStartPosition();
-			_currentPlayer = PlayerFactory.BLACK;
+			if(_bot == null || _model.currentPlayer != _bot.color)
+			{
+				makeMove(point);
+			}
+			else if(_model.currentPlayer == _bot.color)
+			{
+				_bot.takeCell();
+			}
 		}
 
 		internal function makeMove(point:Point):void
@@ -74,15 +81,9 @@ package controllers
 			{
 				return;
 			}
-			placeStone(_currentPlayer, point);
-			setCellOwner(point, _currentPlayer);
+			placeStone(_model.currentPlayer, point);
+			setCellOwner(point, _model.currentPlayer);
 			turnFinished(true);
-		}
-
-		private function changePlayer():void
-		{
-			_currentPlayer = _currentPlayer == _model.blackScore.player ? _model.whiteScore.player : _model.blackScore.player;
-			trace("current player is:  " + _currentPlayer);
 		}
 
 		private function placeStone(turn:uint, position:Point):void
@@ -145,7 +146,7 @@ package controllers
 				{
 					if(turnStones)
 					{
-						toLineStones(_currentPlayer, position, tempPoint, factor);
+						toLineStones(_model.currentPlayer, position, tempPoint, factor);
 					}
 					return stoneCount - 1;
 				}
@@ -167,7 +168,7 @@ package controllers
 
 		internal function checkNextSameOwner(point:Point):Boolean
 		{
-			return getCellOwner(point) == _currentPlayer;
+			return getCellOwner(point) == _model.currentPlayer;
 		}
 
 		private function toLineStones(turn:uint, posFrom:Point, posTo:Point, factor:Point):void
@@ -214,7 +215,7 @@ package controllers
 		{
 			if(changeTurn)
 			{
-				changePlayer();
+				_model.changePlayer();
 			}
 			calculateScore();
 			if(isNextMovePossible())
@@ -243,7 +244,7 @@ package controllers
 
 			if(changeTurn)
 			{
-				changePlayer();
+				_model.changePlayer();
 			}
 			//todo game over not cell for step - pass
 
@@ -251,8 +252,6 @@ package controllers
 
 		private function calculateScore():void
 		{
-			_model.blackScore.reset();
-			_model.whiteScore.reset();
 			var tempPoint:Point;
 			var blackCount:uint = 0;
 			var whiteCount:uint = 0;
@@ -273,10 +272,11 @@ package controllers
 					{
 						whiteCount++;
 					}
-					_model.blackScore.score = blackCount;
-					_model.whiteScore.score = whiteCount;
 				}
 			}
+
+			_model.blackScore.score = blackCount;
+			_model.whiteScore.score = whiteCount;
 		}
 
 		private function isNextMovePossible():Boolean
@@ -298,11 +298,6 @@ package controllers
 				}
 			}
 			return false;
-		}
-
-		public function get currentPlayer():uint
-		{
-			return _currentPlayer;
 		}
 	}
 }

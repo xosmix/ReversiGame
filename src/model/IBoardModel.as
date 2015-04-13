@@ -1,7 +1,7 @@
 /**
  * Created by SergeyMalenko on 12.04.2015.
  */
-package models
+package model
 {
 	import flash.geom.Point;
 
@@ -19,10 +19,16 @@ package models
 
 		function setCellOwner(point:Point, owner:uint):void
 
+		function changePlayer():void
+
 		function get board():Array
 
 		function get blackScore():ScoreGameModel;
 
 		function get whiteScore():ScoreGameModel;
+
+		function get currentPlayer():uint
+
+		function set currentPlayer(value:uint):void
 	}
 }

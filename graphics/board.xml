@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TextureAtlas imagePath="board.png">
-	<!-- Created with Adobe Flash Professional version 14.2.0.20 -->
-	<!-- http://www.adobe.com/products/flash.html -->
-	<SubTexture name="board" x="0" y="0" width="444" height="444" pivotX="0" pivotY="0"/>
-</TextureAtlas>

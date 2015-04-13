@@ -3,7 +3,6 @@
  */
 package core
 {
-	import flash.filesystem.File;
 
 	import starling.textures.Texture;
 
@@ -17,9 +16,11 @@ package core
 		{
 			_manager = new AssetManager();
 			_completeFunc = completeFunc;
-			var appDir:File = File.applicationDirectory;
+			//var appDir:File = File.applicationDirectory;
+
 			_manager.verbose = true;
-			_manager.enqueue(appDir.resolvePath("graphics"));
+			_manager.enqueue("graphics/graphics.png");
+			_manager.enqueue("graphics/graphics.xml");
 			_manager.loadQueue(onComplete);
 		}
 

@@ -3,15 +3,15 @@
  */
 package core
 {
-	import controllers.HumanController;
-	import controllers.IHumanController;
+	import controller.HumanController;
+	import controller.IHumanController;
 
 	import core.AssetsManager;
 
-	import models.BoardModel;
+	import model.BoardModel;
 
-	import models.IBoardModel;
-	import models.ICellModel;
+	import model.IBoardModel;
+	import model.ICellModel;
 
 	import starling.display.Image;
 
@@ -21,8 +21,8 @@ package core
 	import starling.textures.Texture;
 	import starling.utils.AssetManager;
 
-	import views.BoardView;
-	import views.CellView;
+	import view.BoardView;
+	import view.CellView;
 
 	public class Game extends Sprite
 	{
@@ -48,11 +48,13 @@ package core
 
 		private function startGame():void
 		{
+			var background:Image = new Image(AssetsManager.getTextureByName("background"));
+			addChild(background);
 			_boardModel = new BoardModel();
 			_controller = new HumanController(_boardModel);
 			_view = new BoardView(_boardModel, _controller);
-			_view.x = stage.stageWidth - _view.width >> 1;
-			_view.y = stage.stageHeight - _view.height >> 1;
+			_view.x = background.width - _view.width >> 1;
+			_view.y = background.height - _view.height >> 1;
 			addChild(_view);
 		}
 	}
