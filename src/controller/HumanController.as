@@ -6,8 +6,10 @@ package controller
 	import flash.geom.Point;
 
 	import model.BoardModel;
+	import model.GameOverHelper;
 	import model.IBoardModel;
-	import model.PlayerFactory;
+	import model.IPlayerModel;
+	import model.PlayerHelper;
 
 	import starling.display.DisplayObject;
 	import starling.events.Touch;
@@ -24,48 +26,95 @@ package controller
 		public function HumanController(model:IBoardModel):void
 		{
 			_model = model;
-			_model.reset();
-			initBot();
 		}
 
-		private function initBot():void
+		private function initBot(player:IPlayerModel):void
 		{
-			//_bot = new BotController(this, _model.whiteScore.player);
+			_bot = new BotController(this, player.color);
+		}
+
+		private function autoTurn():void
+		{
+			if(_bot != null && _bot.color == _model.currentColor)
+			{
+				_bot.takeCell();
+			}
 		}
 
 		public function initStartPosition():void
 		{
 			_model.initStartPosition();
-			_model.currentPlayer = PlayerFactory.BLACK;
 			calculateScore();
+		}
+
+		public function reset():void
+		{
+			_model.reset();
+			_bot = null;
+			initStartPosition();
+		}
+
+		public function setConfigs(data:Object):void
+		{
+			if(data.rival == PlayerHelper.ROBOT)
+			{
+				if(data.color == PlayerHelper.BLACK)
+				{
+					initBot(_model.whitePlayer);
+					_model.blackPlayer.isMy = true;
+				}
+				else if(data.color == PlayerHelper.WHITE)
+				{
+					initBot(_model.blackPlayer);
+					_model.whitePlayer.isMy = true;
+				}
+			}
+			else if(data.rival == PlayerHelper.HUMAN)
+			{
+				_model.blackPlayer.isMy = true;
+				_model.whitePlayer.isMy = true;
+				return;
+			}
+
+			autoTurn();
 		}
 
 		public function onActivityCell(e:TouchEvent):void
 		{
-			var touchHover:Touch = e.getTouch(e.target as DisplayObject);
-			if(touchHover == null)
+			if(_model.currentColor == _model.blackPlayer.color && _model.blackPlayer.isMy ||
+			   _model.currentColor == _model.whitePlayer.color && _model.whitePlayer.isMy)
 			{
-				_model.selectedCell((e.currentTarget as CellView).position, false);
-				return;
-			}
+				var touchHover:Touch = e.getTouch(e.target as DisplayObject);
+				if(touchHover == null)
+				{
+					if(cellIsEmpty((e.currentTarget as CellView).position))
+					{
+						_model.selectedCell((e.currentTarget as CellView).position, false);
+					}
+					return;
+				}
 
-			if(touchHover.phase == TouchPhase.HOVER)
-			{
-				_model.selectedCell((e.currentTarget as CellView).position, true);
-			}
-			else if(touchHover.phase == TouchPhase.BEGAN)
-			{
-				takeCell((e.currentTarget as CellView).position);
+				if(touchHover.phase == TouchPhase.HOVER)
+				{
+					if(cellIsEmpty((e.currentTarget as CellView).position))
+					{
+						_model.selectedCell((e.currentTarget as CellView).position, true);
+					}
+				}
+				else if(touchHover.phase == TouchPhase.BEGAN)
+				{
+					takeCell((e.currentTarget as CellView).position);
+				}
 			}
 		}
 
 		public function takeCell(point:Point = null):void
 		{
-			if(_bot == null || _model.currentPlayer != _bot.color)
+			if(_bot == null || _model.currentColor != _bot.color && !_bot.isRunnig)
 			{
 				makeMove(point);
 			}
-			else if(_model.currentPlayer == _bot.color)
+			else if(_model.currentColor == _bot.color && !_bot.isRunnig)
 			{
 				_bot.takeCell();
 			}
@@ -81,8 +130,8 @@ package controller
 			{
 				return;
 			}
-			placeStone(_model.currentPlayer, point);
-			setCellOwner(point, _model.currentPlayer);
+			placeStone(_model.currentColor, point);
+			setCellOwner(point, _model.currentColor);
 			turnFinished(true);
 		}
 
@@ -132,7 +181,7 @@ package controller
 		{
 			var tempPoint:Point = new Point(position.x, position.y);
 			var stoneCount:uint = 0;
-			var border:uint = BoardModel.SIZE_BOARD*BoardModel.SIZE_BOARD;
+			var border:uint = BoardModel.SIZE_BOARD * BoardModel.SIZE_BOARD;
 			while(stoneCount < border)
 			{
 				++stoneCount;
@@ -146,7 +195,7 @@ package controller
 				{
 					if(turnStones)
 					{
-						toLineStones(_model.currentPlayer, position, tempPoint, factor);
+						toLineStones(_model.currentColor, position, tempPoint, factor);
 					}
 					return stoneCount - 1;
 				}
@@ -163,12 +212,12 @@ package controller
 
 		internal function cellIsEmpty(point:Point):Boolean
 		{
-			return getCellOwner(point) == PlayerFactory.EMPTY;
+			return getCellOwner(point) == PlayerHelper.EMPTY;
 		}
 
 		internal function checkNextSameOwner(point:Point):Boolean
 		{
-			return getCellOwner(point) == _model.currentPlayer;
+			return getCellOwner(point) == _model.currentColor;
 		}
 
 		private function toLineStones(turn:uint, posFrom:Point, posTo:Point, factor:Point):void
@@ -216,6 +265,11 @@ package controller
 			if(changeTurn)
 			{
 				_model.changePlayer();
+				if(_bot != null && _bot.isRunnig)
+				{
+					_bot.isRunnig = false;
+				}
+				autoTurn();
 			}
 			calculateScore();
 			if(isNextMovePossible())
@@ -223,31 +277,34 @@ package controller
 				return;
 			}
 
-			if((_model.blackScore.score + _model.whiteScore.score) == BoardModel.SIZE_BOARD*BoardModel.SIZE_BOARD)
+			if((_model.blackPlayer.score + _model.whitePlayer.score) == BoardModel.SIZE_BOARD * BoardModel.SIZE_BOARD)
 			{
-				//todo game over
+				if(_model.blackPlayer.score == _model.whitePlayer.score)
+				{
+					_model.onGameOver(GameOverHelper.DEAD_HIT);
+					return;
+				}
+				_model.onGameOver(GameOverHelper.IS_WINNER);
 				return;
 			}
 
-			if(_model.blackScore.score == 0 || _model.blackScore.score == 0)
+			if(_model.blackPlayer.score == 0 || _model.whitePlayer.score == 0)
 			{
-				//todo game over not stones
+				_model.onGameOver(GameOverHelper.FORFEITED);
 				return;
 			}
 
 			if(isNextMovePossible())
 			{
-				//todo game over not cell for step
-
+				_model.onGameOver(GameOverHelper.FORFEITED);
 				return;
 			}
 
 			if(changeTurn)
 			{
 				_model.changePlayer();
+				autoTurn();
 			}
-			//todo game over not cell for step - pass
-
 		}
 
 		private function calculateScore():void
@@ -264,27 +321,27 @@ package controller
 					{
 						continue;
 					}
-					if(getCellOwner(tempPoint) == _model.blackScore.player)
+					if(getCellOwner(tempPoint) == _model.blackPlayer.color)
 					{
 						blackCount++;
 					}
-					else if(getCellOwner(tempPoint) == _model.whiteScore.player)
+					else if(getCellOwner(tempPoint) == _model.whitePlayer.color)
 					{
 						whiteCount++;
 					}
 				}
 			}
 
-			_model.blackScore.score = blackCount;
-			_model.whiteScore.score = whiteCount;
+			_model.blackPlayer.score = blackCount;
+			_model.whitePlayer.score = whiteCount;
 		}
 
 		private function isNextMovePossible():Boolean
 		{
 			var tempPoint:Point;
-			for(var i:uint = 0; i < BoardModel.SIZE_BOARD; ++i)
+			for(var i:uint = 0; i < BoardModel.SIZE_BOARD; i++)
 			{
-				for(var j:uint = 0; j < BoardModel.SIZE_BOARD; ++j)
+				for(var j:uint = 0; j < BoardModel.SIZE_BOARD; j++)
 				{
 					tempPoint = new Point(i, j);
 					if(!cellIsEmpty(tempPoint))

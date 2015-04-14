@@ -4,6 +4,10 @@
 package core
 {
 
+	import error.GameError;
+
+	import popup.PopupManager;
+
 	import starling.textures.Texture;
 
 	import starling.utils.AssetManager;
@@ -16,7 +20,6 @@ package core
 		{
 			_manager = new AssetManager();
 			_completeFunc = completeFunc;
-			//var appDir:File = File.applicationDirectory;
 
 			_manager.verbose = true;
 			_manager.enqueue("graphics/graphics.png");
@@ -34,7 +37,15 @@ package core
 
 		public static function getTextureByName(name:String):Texture
 		{
-			return _manager.getTexture(name);
+			var texture:Texture = _manager.getTexture(name);
+			if(texture != null)
+			{
+				return texture;
+			}
+			else
+			{
+				throw new GameError(GameError.TEXTURE_IS_NULL);
+			}
 		}
 	}
 }

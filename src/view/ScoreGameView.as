@@ -5,7 +5,7 @@ package view
 {
 	import core.AssetsManager;
 
-	import model.PlayerFactory;
+	import model.PlayerHelper;
 
 	import starling.display.DisplayObjectContainer;
 
@@ -37,11 +37,11 @@ package view
 		private function initTextFields():void
 		{
 			var textWidth:Number = this.width / 5;
-			var blackCaption:TextField = new TextField(textWidth, this.height, "BLACK", "LilyUPC", 30, 0x000000);
-			var whiteCaption:TextField = new TextField(textWidth, this.height, "WHITE", "LilyUPC", 30, 0xFFFFFF);
-			_blackScore = new TextField(textWidth, this.height, "0", "LilyUPC", 40, 0xFFFFFF, true);
-			_whiteScore = new TextField(textWidth, this.height, "0", "LilyUPC", 40, 0xFFFFFF, true);
-			whiteCaption.x = this.width - whiteCaption.width;
+			var blackCaption:TextField = new TextField(textWidth, height, "BLACK", "LilyUPC", 30, 0x000000);
+			var whiteCaption:TextField = new TextField(textWidth, height, "WHITE", "LilyUPC", 30, 0xFFFFFF);
+			_blackScore = new TextField(textWidth, height, "0", "LilyUPC", 40, 0xFFFFFF, true);
+			_whiteScore = new TextField(textWidth, height, "0", "LilyUPC", 40, 0xFFFFFF, true);
+			whiteCaption.x = width - whiteCaption.width;
 			_blackScore.x = (width >> 1) - _blackScore.width;
 			_whiteScore.x = width >> 1;
 
@@ -64,16 +64,16 @@ package view
 
 		public function setScore(score:uint, color:uint, currentPlayer:uint):void
 		{
-			if(color == PlayerFactory.BLACK)
+			if(color == PlayerHelper.BLACK)
 			{
 				_blackScore.text = score.toString();
 			}
-			else if(color == PlayerFactory.WHITE)
+			else if(color == PlayerHelper.WHITE)
 			{
 				_whiteScore.text = score.toString();
 			}
 
-			_blackStone.alpha = currentPlayer == PlayerFactory.BLACK ? 1 : 0;
+			_blackStone.alpha = currentPlayer == PlayerHelper.BLACK ? 1 : 0;
 			_whiteStone.alpha = _blackStone.alpha == 1 ? 0 : 1;
 		}
 	}

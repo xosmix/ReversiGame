@@ -47,7 +47,13 @@ package view
 			}
 		}
 
-		private function showIfSelected(status:Boolean):void
+		public function reset(newTexture:Texture):void
+		{
+			texture = newTexture;
+			alpha = 0;
+		}
+
+		public function updateState(status:Boolean):void
 		{
 			alpha = status ? 1 : 0;
 		}

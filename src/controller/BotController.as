@@ -12,6 +12,8 @@ package controller
 
 	public class BotController
 	{
+		private static const DURATION:Number = 1500;
+
 		private static const TOP_LEFT_CORNER:Point = new Point(0, 0);
 		private static const TOP_RIGHT_CORNER:Point = new Point(7, 0);
 		private static const BOTTOM_RIGHT_CORNER:Point = new Point(7, 7);
@@ -35,11 +37,13 @@ package controller
 		private static var _color:uint;
 		private static var _timer:Timer;
 
+		private var _isRunnig:Boolean;
+
 		public function BotController(controller:HumanController, color:uint)
 		{
 			_controller = controller;
 			_color = color;
-			_timer = new Timer(2000);
+			_timer = new Timer(DURATION);
 		}
 
 		public function takeCell():void
@@ -52,6 +56,7 @@ package controller
 			};
 			_timer.addEventListener(TimerEvent.TIMER, bootStart);
 			_timer.start();
+			_isRunnig = true;
 
 		}
 
@@ -79,7 +84,7 @@ package controller
 		{
 			if(findCaptures(TOP_LEFT_CORNER, false) > 0)
 			{
-				makeMove(TOP_LEFT_CORNER[0]);
+				makeMove(TOP_LEFT_CORNER);
 				return;
 			}
 			if(findCaptures(TOP_RIGHT_CORNER, false) > 0)
@@ -161,7 +166,7 @@ package controller
 			}
 
 			var captureCounts:Array = [];
-			var border:uint = BoardModel.SIZE_BOARD - 1;
+			var border:uint = BoardModel.SIZE_BOARD;
 			var tempPoint:Point;
 			for(var i:uint = 0; i < border; ++i)
 			{
@@ -306,6 +311,16 @@ package controller
 		public function get color():uint
 		{
 			return _color;
+		}
+
+		public function get isRunnig():Boolean
+		{
+			return _isRunnig;
+		}
+
+		public function set isRunnig(value:Boolean):void
+		{
+			_isRunnig = value;
 		}
 	}
 }

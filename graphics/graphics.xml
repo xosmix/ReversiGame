@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="graphics.png">
+	<!-- Created with Adobe Flash Professional version 14.2.0.20 -->
+	<!-- http://www.adobe.com/products/flash.html -->
+	<SubTexture name="background" x="0" y="0" width="480" height="600" pivotX="0" pivotY="0"/>
+	<SubTexture name="bigBlackStone" x="0" y="600" width="93" height="94" pivotX="0" pivotY="0"/>
+	<SubTexture name="bigWhiteStone" x="93" y="600" width="93" height="94" pivotX="0" pivotY="0"/>
+	<SubTexture name="blackStone" x="186" y="600" width="40" height="40" pivotX="20" pivotY="20"/>
+	<SubTexture name="board" x="0" y="694" width="444" height="444" pivotX="221" pivotY="221.25"/>
+	<SubTexture name="button" x="0" y="1138" width="188" height="70" pivotX="0" pivotY="0"/>
+	<SubTexture name="close" x="188" y="1138" width="55" height="55" pivotX="0" pivotY="0"/>
+	<SubTexture name="empty" x="243" y="1138" width="55" height="55" pivotX="27.5" pivotY="27.5"/>
+	<SubTexture name="human" x="298" y="1138" width="91" height="91" pivotX="0" pivotY="0"/>
+	<SubTexture name="popup" x="0" y="1229" width="480" height="600" pivotX="0" pivotY="0"/>
+	<SubTexture name="popupButton" x="0" y="1829" width="36" height="36" pivotX="0" pivotY="0"/>
+	<SubTexture name="robot" x="36" y="1829" width="92" height="92" pivotX="-110.8" pivotY="-25.75"/>
+	<SubTexture name="score" x="0" y="1921" width="423" height="92" pivotX="0" pivotY="0"/>
+	<SubTexture name="whiteStone" x="423" y="1921" width="40" height="40" pivotX="20" pivotY="20"/>
+</TextureAtlas>

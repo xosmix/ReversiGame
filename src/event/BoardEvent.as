@@ -10,7 +10,7 @@ package event
 		public static const CELL_CHANGED:String = "cellChanged";
 		public static const SCORE_CHANGED:String = "scoreChanged";
 		public static const CELL_SELECTED:String = "cellSelected";
-		public static const BOARD_TEXTURE_CHANGED:String = "boardTextureChanged";
+		public static const GAME_OVER:String = "gameOver";
 		private var _data:Object;
 		public function BoardEvent(type:String, data:Object)
 		{

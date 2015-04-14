@@ -14,5 +14,9 @@ package controller
 		function onActivityCell(e:TouchEvent):void
 
 		function takeCell(point:Point = null):void
+
+		function setConfigs(data:Object):void;
+
+		function reset():void
 	}
 }

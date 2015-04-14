@@ -30,7 +30,7 @@ package model
 
 		public function reset():void
 		{
-			_owner = PlayerFactory.EMPTY;
+			_owner = PlayerHelper.EMPTY;
 		}
 	}
 }

@@ -13,6 +13,11 @@ package core
 	import model.IBoardModel;
 	import model.ICellModel;
 
+	import popup.IPopup;
+	import popup.PopupManager;
+
+	import popup.StartPopup;
+
 	import starling.display.Image;
 
 	import starling.display.Sprite;
@@ -23,10 +28,11 @@ package core
 
 	import view.BoardView;
 	import view.CellView;
+	import view.RefreshButton;
 
 	public class Game extends Sprite
 	{
-		private var _boardModel:IBoardModel;
+		private var _model:IBoardModel;
 		private var _controller:IHumanController;
 		private var _view:BoardView;
 		public function Game()
@@ -43,6 +49,7 @@ package core
 
 		private function onAddedToStage(e:Event = null):void
 		{
+			new PopupManager(this);
 			new AssetsManager(startGame);
 		}
 
@@ -50,12 +57,19 @@ package core
 		{
 			var background:Image = new Image(AssetsManager.getTextureByName("background"));
 			addChild(background);
-			_boardModel = new BoardModel();
-			_controller = new HumanController(_boardModel);
-			_view = new BoardView(_boardModel, _controller);
+			_model = new BoardModel();
+			_controller = new HumanController(_model);
+			_view = new BoardView(_model, _controller);
 			_view.x = background.width - _view.width >> 1;
 			_view.y = background.height - _view.height >> 1;
 			addChild(_view);
+
+			var refreshButton:RefreshButton = new RefreshButton();
+			refreshButton.x = width - refreshButton.width;
+			refreshButton.addEventListener(TouchEvent.TOUCH, refreshButton.onClick);
+			addChild(refreshButton);
+
+			PopupManager.instance.showStartPopup({action: _view.setConfigs});
 		}
 	}
 }

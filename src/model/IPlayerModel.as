@@ -3,14 +3,18 @@
  */
 package model
 {
-	public interface IScoreGameModel
+	public interface IPlayerModel
 	{
-		function get player():uint
+		function get color():uint
 
 		function get score():uint
 
 		function set score(value:uint):void
 
 		function reset():void
+
+		function get isMy():Boolean
+
+		function set isMy(value:Boolean):void
 	}
 }

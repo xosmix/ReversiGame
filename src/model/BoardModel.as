@@ -14,23 +14,24 @@ package model
 	{
 		public static const SIZE_BOARD:uint = 8;
 		private var _board:Array;
-		private var _blackScore:ScoreGameModel;
-		private var _whiteScore:ScoreGameModel;
-		private var _currentPlayer:uint;
+		private var _blackScore:PlayerModel;
+		private var _whiteScore:PlayerModel;
+		private var _currentColor:uint;
 
 		public function BoardModel()
 		{
 			_board = [];
+			initCells();
 			initPlayerScores();
 		}
 
 		private function initPlayerScores():void
 		{
-			_blackScore = new ScoreGameModel(this, PlayerFactory.BLACK);
-			_whiteScore = new ScoreGameModel(this, PlayerFactory.WHITE);
+			_blackScore = new PlayerModel(this, PlayerHelper.BLACK);
+			_whiteScore = new PlayerModel(this, PlayerHelper.WHITE);
 		}
 
-		public function reset():void
+		private function initCells():void
 		{
 			for(var i:uint = 0; i < SIZE_BOARD; i++)
 			{
@@ -39,6 +40,19 @@ package model
 				{
 					var cellModel:ICellModel = new CellModel(new Point(i, j));
 					_board[i][j] = cellModel;
+				}
+			}
+		}
+
+		public function reset():void
+		{
+			for(var i:uint = 0; i < SIZE_BOARD; i++)
+			{
+				for(var j:uint = 0; j < SIZE_BOARD; j++)
+				{
+					var cell:ICellModel = _board[i][j];
+					cell.reset();
+					changeCell(cell.position, cell.owner);
 				}
 			}
 			_blackScore.reset();
@@ -53,10 +67,12 @@ package model
 			var whiteStartPosition:Vector.<Point> =	new <Point>[new Point(posAverage - 1, posAverage - 1),
 						new Point(posAverage, posAverage)];
 
-			changeCell(blackStartPosition[0], PlayerFactory.BLACK);
-			changeCell(blackStartPosition[1], PlayerFactory.BLACK);
-			changeCell(whiteStartPosition[0], PlayerFactory.WHITE);
-			changeCell(whiteStartPosition[1], PlayerFactory.WHITE);
+			changeCell(blackStartPosition[0], PlayerHelper.BLACK);
+			changeCell(blackStartPosition[1], PlayerHelper.BLACK);
+			changeCell(whiteStartPosition[0], PlayerHelper.WHITE);
+			changeCell(whiteStartPosition[1], PlayerHelper.WHITE);
+
+			_currentColor = PlayerHelper.BLACK;
 		}
 
 		public function changeCell(position:Point, futureOwner:uint):void
@@ -68,9 +84,13 @@ package model
 
 		public function selectedCell(position:Point, status:Boolean):void
 		{
-			//dispatchEvent(new BoardEvent(BoardEvent.CELL_CHANGED, {position: position, status: status}));
+			dispatchEvent(new BoardEvent(BoardEvent.CELL_SELECTED, {position: position, status: status}));
 		}
 
+		public function onGameOver(gameOverType:uint):void
+		{
+			dispatchEvent(new BoardEvent(BoardEvent.GAME_OVER, {type:gameOverType}));
+		}
 		public function getCellOwner(point:Point):uint
 		{
 			return _board[point.x][point.y].owner;
@@ -83,8 +103,8 @@ package model
 
 		public function changePlayer():void
 		{
-			_currentPlayer = _currentPlayer == _blackScore.player ? _whiteScore.player : _blackScore.player;
-			trace("current player is:  " + _currentPlayer);
+			_currentColor = _currentColor == _blackScore.color ? _whiteScore.color : _blackScore.color;
+			trace("current color is:  " + _currentColor);
 		}
 
 		public function get board():Array
@@ -92,24 +112,19 @@ package model
 			return _board;
 		}
 
-		public function get blackScore():ScoreGameModel
+		public function get blackPlayer():PlayerModel
 		{
 			return _blackScore;
 		}
 
-		public function get whiteScore():ScoreGameModel
+		public function get whitePlayer():PlayerModel
 		{
 			return _whiteScore;
 		}
 
-		public function get currentPlayer():uint
+		public function get currentColor():uint
 		{
-			return _currentPlayer;
-		}
-
-		public function set currentPlayer(value:uint):void
-		{
-			_currentPlayer = value;
+			return _currentColor;
 		}
 	}
 }

@@ -13,6 +13,8 @@ package model
 
 		function selectedCell(position:Point, status:Boolean):void
 
+		function onGameOver(gameOverType:uint):void
+
 		function reset():void
 
 		function getCellOwner(point:Point):uint;
@@ -23,12 +25,10 @@ package model
 
 		function get board():Array
 
-		function get blackScore():ScoreGameModel;
+		function get blackPlayer():PlayerModel;
 
-		function get whiteScore():ScoreGameModel;
+		function get whitePlayer():PlayerModel;
 
-		function get currentPlayer():uint
-
-		function set currentPlayer(value:uint):void
+		function get currentColor():uint
 	}
 }
