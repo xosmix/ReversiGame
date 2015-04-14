@@ -3,13 +3,17 @@
 	<!-- Created with Adobe Flash Professional version 14.2.0.20 -->
 	<!-- http://www.adobe.com/products/flash.html -->
 	<SubTexture name="background" x="0" y="0" width="480" height="600" pivotX="0" pivotY="0"/>
-	<SubTexture name="blackStone" x="0" y="600" width="40" height="40" pivotX="0" pivotY="0"/>
-	<SubTexture name="board" x="40" y="600" width="444" height="444" pivotX="0" pivotY="0"/>
-	<SubTexture name="button" x="0" y="1044" width="180" height="81" pivotX="0" pivotY="0"/>
-	<SubTexture name="close" x="180" y="1044" width="55" height="55" pivotX="0" pivotY="0"/>
-	<SubTexture name="empty" x="235" y="1044" width="55" height="55" pivotX="0" pivotY="0"/>
-	<SubTexture name="popup" x="0" y="1125" width="463" height="566" pivotX="0" pivotY="0"/>
-	<SubTexture name="popupButton" x="463" y="1125" width="36" height="36" pivotX="0" pivotY="0"/>
-	<SubTexture name="score" x="0" y="1691" width="423" height="92" pivotX="0" pivotY="0"/>
-	<SubTexture name="whiteStone" x="423" y="1691" width="40" height="40" pivotX="0" pivotY="0"/>
+	<SubTexture name="bigBlackStone" x="0" y="600" width="92" height="93" pivotX="0" pivotY="0"/>
+	<SubTexture name="bigWhiteStone" x="92" y="600" width="92" height="93" pivotX="0" pivotY="0"/>
+	<SubTexture name="blackStone" x="184" y="600" width="35" height="35" pivotX="0" pivotY="0"/>
+	<SubTexture name="board" x="0" y="693" width="444" height="444" pivotX="221" pivotY="221.25"/>
+	<SubTexture name="button" x="0" y="1137" width="188" height="70" pivotX="0" pivotY="0"/>
+	<SubTexture name="close" x="188" y="1137" width="55" height="55" pivotX="0" pivotY="0"/>
+	<SubTexture name="empty" x="243" y="1137" width="55" height="55" pivotX="27.5" pivotY="27.5"/>
+	<SubTexture name="human" x="298" y="1137" width="91" height="91" pivotX="0" pivotY="0"/>
+	<SubTexture name="popup" x="0" y="1228" width="480" height="600" pivotX="0" pivotY="0"/>
+	<SubTexture name="popupButton" x="0" y="1828" width="36" height="36" pivotX="0" pivotY="0"/>
+	<SubTexture name="robot" x="36" y="1828" width="92" height="92" pivotX="-110.8" pivotY="-25.75"/>
+	<SubTexture name="score" x="0" y="1920" width="423" height="92" pivotX="0" pivotY="0"/>
+	<SubTexture name="whiteStone" x="423" y="1920" width="35" height="35" pivotX="0" pivotY="0"/>
 </TextureAtlas>
