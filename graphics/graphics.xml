@@ -11,7 +11,7 @@
 	<SubTexture name="close" x="188" y="1138" width="55" height="55" pivotX="0" pivotY="0"/>
 	<SubTexture name="empty" x="243" y="1138" width="55" height="55" pivotX="27.5" pivotY="27.5"/>
 	<SubTexture name="human" x="298" y="1138" width="91" height="91" pivotX="0" pivotY="0"/>
-	<SubTexture name="popup" x="0" y="1229" width="480" height="600" pivotX="0" pivotY="0"/>
+	<SubTexture name="reversi.popup" x="0" y="1229" width="480" height="600" pivotX="0" pivotY="0"/>
 	<SubTexture name="popupButton" x="0" y="1829" width="36" height="36" pivotX="0" pivotY="0"/>
 	<SubTexture name="robot" x="36" y="1829" width="92" height="92" pivotX="-110.8" pivotY="-25.75"/>
 	<SubTexture name="score" x="0" y="1921" width="423" height="92" pivotX="0" pivotY="0"/>
